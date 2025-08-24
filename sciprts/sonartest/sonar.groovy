@@ -2,14 +2,12 @@ pipeline {
     agent any
 
     tools {
-        // Use the tool name from "Global Tool Configuration → SonarQube Scanner installations"
-        sonarQubeScanner 'sonar-scanner'
+        hudson.plugins.sonar.SonarRunnerInstallation 'sonar-scanner'
     }
 
     stages {
         stage('SonarQube Analysis') {
             steps {
-                // Use the SonarQube server name from "Manage Jenkins → Configure System → SonarQube servers"
                 withSonarQubeEnv('MySonar') {
                     sh '''
                         sonar-scanner \
