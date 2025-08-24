@@ -2,14 +2,15 @@ pipeline {
     agent any
 
     tools {
-        // Use the name you configured in "Global Tool Configuration"
-        sonarQubeScanner 'MySonar'
+        // Use the tool name from "Global Tool Configuration → SonarQube Scanner installations"
+        sonarQubeScanner 'sonar-scanner'
     }
 
     stages {
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarscanner') {  // name from Manage Jenkins > Configure System
+                // Use the SonarQube server name from "Manage Jenkins → Configure System → SonarQube servers"
+                withSonarQubeEnv('MySonar') {
                     sh '''
                         sonar-scanner \
                         -Dsonar.projectKey=myproject \
