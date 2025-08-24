@@ -1,13 +1,21 @@
 pipeline {
-  agent any
-  stages {
-    stage('Check Sonar Scanner') {
-      steps {
-        script {
-          def scannerHome = tool 'sonar-scanner'
-          bat "${scannerHome}\\bin\\sonar-scanner -v"
-        }
-      }
+    agent any
+    tools {
+        sonarQubeScanner 'sonar-scanner'
     }
-  }
+    stages {
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('MySonar') {  // <-- SonarQube server name you set in Jenkins
+                    bat """
+                        ${tool 'sonar-scanner'}\\bin\\sonar-scanner.bat ^
+                        -Dsonar.projectKey=myproject ^
+                        -Dsonar.sources=. ^
+                        -Dsonar.host.url=http://localhost:9000 ^
+                        -Dsonar.login=YOUR_TOKEN
+                    """
+                }
+            }
+        }
+    }
 }
