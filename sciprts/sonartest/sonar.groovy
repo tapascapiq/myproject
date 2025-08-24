@@ -1,28 +1,16 @@
-pipeline {
-    agent any
+node {
+    stage('SonarQube Analysis') {
+        // This must match the "Name" you gave in "Global Tool Configuration"
+        def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
 
-    tools {
-        // syntax: <toolType> '<toolName>'
-        // the toolType for SonarQube is "hudson.plugins.sonar.SonarRunnerInstallation"
-        // but in declarative pipeline you simply write: "SonarQubeScanner"
-        SonarQubeScanner 'sonar-scanner'
+        withSonarQubeEnv('MySonar') {   // <-- matches the SonarQube server name you set in Jenkins
+            bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=myproject -Dsonar.sources=."
+        }
     }
 
-    stages {
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('MySonar') {
-                    bat "sonar-scanner -Dsonar.projectKey=myproject -Dsonar.sources=."
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
+    stage('Quality Gate') {
+        timeout(time: 1, unit: 'MINUTES') {
+            waitForQualityGate abortPipeline: true
         }
     }
 }
