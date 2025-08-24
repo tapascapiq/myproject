@@ -1,14 +1,10 @@
 pipeline {
     agent any
 
-    tools {
-        hudson.plugins.sonar.SonarRunnerInstallation 'sonar-scanner'
-    }
-
     stages {
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('MySonar') {  // 'MySonar' must match your SonarQube server name in Jenkins config
+                withSonarQubeEnv('MySonar') {  // MySonar = your SonarQube server name in Jenkins config
                     sh '''
                         sonar-scanner \
                         -Dsonar.projectKey=myproject \
