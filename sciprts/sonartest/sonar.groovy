@@ -2,13 +2,16 @@ pipeline {
     agent any
 
     tools {
-        SonarQubeScanner 'sonar-scanner'   // <-- must match the name you configured in Jenkins
+        // syntax: <toolType> '<toolName>'
+        // the toolType for SonarQube is "hudson.plugins.sonar.SonarRunnerInstallation"
+        // but in declarative pipeline you simply write: "SonarQubeScanner"
+        SonarQubeScanner 'sonar-scanner'
     }
 
     stages {
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('MySonar') {   // <-- must match your SonarQube server config name
+                withSonarQubeEnv('MySonar') {
                     bat "sonar-scanner -Dsonar.projectKey=myproject -Dsonar.sources=."
                 }
             }
