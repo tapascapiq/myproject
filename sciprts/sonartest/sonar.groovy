@@ -4,14 +4,18 @@ pipeline {
     stages {
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('MySonar') {  // MySonar = your SonarQube server name in Jenkins config
-                    sh '''
-                        sonar-scanner \
-                        -Dsonar.projectKey=myproject \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=<your-token>
-                    '''
+                script {
+                    def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+
+                    withSonarQubeEnv('MySonar') {
+                        bat """
+                            ${scannerHome}\\bin\\sonar-scanner.bat ^
+                            -Dsonar.projectKey=myproject ^
+                            -Dsonar.sources=. ^
+                            -Dsonar.host.url=http://localhost:9000 ^
+                            -Dsonar.login=<your-token>
+                        """
+                    }
                 }
             }
         }
